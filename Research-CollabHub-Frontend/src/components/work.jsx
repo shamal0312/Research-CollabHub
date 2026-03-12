@@ -1,0 +1,26 @@
+import React from "react";
+
+const Work = () => {
+  const tasks = [
+    { id: 1, title: "Finalize proposal", status: "Pending" },
+    { id: 2, title: "Upload documents", status: "Completed" },
+    { id: 3, title: "Team meeting", status: "In Progress" }
+  ];
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Workspace Dashboard</h1>
+
+      <div className="grid gap-4">
+        {tasks.map((task) => (
+          <div key={task.id} className="border rounded-lg p-4 shadow">
+            <h2 className="font-semibold">{task.title}</h2>
+            <p>Status: {task.status}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Work;
