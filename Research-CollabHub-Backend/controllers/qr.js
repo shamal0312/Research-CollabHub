@@ -44,3 +44,19 @@ export const featurePortfolio = async (req, res) => {
     });
   }
 };
+
+export const getPortfolioResults = async (req, res) => {
+  try {
+    res.status(200).json({
+      results: [
+        { user: "Shamal", score: 92 },
+        { user: "Nandu", score: 88 },
+        { user: "Mishelle", score: 84 }
+      ]
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch portfolio results"
+    });
+  }
+};
