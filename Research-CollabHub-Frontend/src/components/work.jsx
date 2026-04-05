@@ -20,7 +20,19 @@ const Work = () => {
         ))}
       </div>
     </div>
+
+
+
   );
+  <div className="mt-6">
+  <h2 className="text-xl font-semibold mb-2">Workspace Updates</h2>
+  {notifications.map((note, index) => (
+    <p key={index} className="text-sm border-b py-2">
+      {note}
+    </p>
+  ))}
+</div>
 };
+
 
 export default Work;
