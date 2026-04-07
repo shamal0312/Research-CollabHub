@@ -90,4 +90,16 @@ public class ProjectController {
 
         System.out.println("Total Projects: " + controller.getProjectCount());
     }
+
+    export const acceptProjectRequest = async (req, res) => {
+  res.status(200).json({
+    message: "Request accepted successfully"
+  });
+};
+
+export const rejectProjectRequest = async (req, res) => {
+  res.status(200).json({
+    message: "Request rejected successfully"
+  });
+};
 }
