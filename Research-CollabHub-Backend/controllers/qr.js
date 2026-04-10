@@ -75,3 +75,18 @@ export const approvePortfolio = async (req, res) => {
     });
   }
 };
+
+export const getFeaturedPortfolios = async (req, res) => {
+  try {
+    res.status(200).json({
+      featured: [
+        { id: 1, title: "AI Research Portfolio" },
+        { id: 2, title: "Web Development Work" }
+      ]
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch featured portfolios"
+    });
+  }
+};
