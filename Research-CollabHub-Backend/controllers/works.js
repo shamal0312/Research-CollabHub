@@ -25,3 +25,19 @@ export const getWorkspaceDocuments = async (req, res) => {
     documents: []
   });
 };
+
+export const getWorkspaceActivity = async (req, res) => {
+  res.status(200).json({
+    activities: [
+      "Task completed",
+      "New member joined",
+      "Document updated"
+    ]
+  });
+};
+
+export const updateWorkspaceStatus = async (req, res) => {
+  res.status(200).json({
+    message: "Workspace status updated successfully"
+  });
+};
