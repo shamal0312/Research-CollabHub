@@ -103,3 +103,22 @@ export const rejectProjectRequest = async (req, res) => {
   });
 };
 }
+
+export const getAISkillMatch = async (req, res) => {
+  const { userSkills, projectSkills } = req.body;
+
+  const matchedSkills = projectSkills.filter((skill) =>
+    userSkills.includes(skill)
+  );
+
+  const score = Math.round(
+    (matchedSkills.length / projectSkills.length) * 100
+  );
+
+  res.status(200).json({
+    score,
+    matchedSkills,
+    recommendation:
+      score >= 70 ? "Highly Recommended" : "Needs Improvement"
+  });
+};
