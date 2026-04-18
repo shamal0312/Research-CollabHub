@@ -15,3 +15,16 @@ export const logoutAdmin = async (req, res) => {
     message: "Admin logged out successfully"
   });
 };
+
+
+export const getBooks = async (req, res) => {
+  res.json({
+    books: []
+  });
+};
+
+export const addBook = async (req, res) => {
+  res.json({
+    message: "Book added successfully"
+  });
+};
