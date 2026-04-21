@@ -60,3 +60,18 @@ export const getPortfolioResults = async (req, res) => {
     });
   }
 };
+
+export const approvePortfolio = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    res.status(200).json({
+      message: "Portfolio approved by admin",
+      portfolioId: id
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Approval failed"
+    });
+  }
+};
