@@ -176,13 +176,56 @@ const WorkspaceTasks = () => {
               <h1 className="text-3xl font-bold text-black mb-2">Task Board</h1>
               <p className="text-gray-600">Manage and track team tasks in real-time</p>
             </div>
-            <button
-              onClick={() => setShowModal(true)}
-              className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-all duration-300 font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl"
-            >
-              <FaPlus />
-              Create Task
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  try {
+                    const token = localStorage.getItem("token");
+
+                    const response = await fetch(
+                      `http://localhost:5000/api/tasks/certificate/${workspaceId}`,
+                      {
+                        method: "GET",
+                        headers: {
+                          Authorization: `Bearer ${token}` 
+                        }
+                      }
+                    );
+
+                    if (!response.ok) {
+                      throw new Error("Failed");
+                    }
+
+                    const blob = await response.blob();
+
+                    const url = window.URL.createObjectURL(blob);
+
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = "certificate.pdf";
+
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+
+                    window.URL.revokeObjectURL(url);
+
+                  } catch (error) {
+                    alert("Failed to generate certificate");
+                  }
+                }}
+                className="bg-gray-200 text-black px-6 py-3 rounded-xl hover:bg-gray-300 transition-all duration-300 font-semibold"
+              >
+                Generate Certificate
+              </button>
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-all duration-300 font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <FaPlus />
+                Create Task
+              </button>
+            </div>
           </div>
         </div>
 

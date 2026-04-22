@@ -12,7 +12,8 @@ import {
   removeInterest,
   getPublicProfile,
   searchUsers,
-  getAllUsers
+  getAllUsers,
+  downloadPublicCV
 } from "../controllers/profileController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
@@ -22,6 +23,7 @@ const router = express.Router();
 
 // Public routes (accessible to all users)
 router.get("/public/:userId", getPublicProfile);
+router.get("/public/:userId/cv", downloadPublicCV);
 router.get("/search", searchUsers);
 router.get("/discover", getAllUsers);
 

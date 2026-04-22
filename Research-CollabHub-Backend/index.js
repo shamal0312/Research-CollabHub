@@ -13,8 +13,8 @@ import chatRoutes from "./routes/chatRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
 import portfolioRoutes from "./routes/portfolioRoutes.js";
-
-
+import libraryRoutes from "./routes/libraryRoutes.js";
+import codeLabRoutes from "./routes/codeLabRoutes.js";
 
 
 
@@ -63,9 +63,8 @@ app.use("/api/workspaces", taskRoutes);
 app.use("/api/tasks", taskRoutes); 
 app.use("/api/workspaces/:workspaceId/meetings", meetingRoutes); // meetings inside workspace
 app.use("/api/portfolio", portfolioRoutes);
-
-
-
+app.use("/api/library", libraryRoutes);
+app.use("/api/codelab", codeLabRoutes);
 
 
 

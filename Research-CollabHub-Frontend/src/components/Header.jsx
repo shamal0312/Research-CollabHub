@@ -41,6 +41,10 @@ const Header = () => {
           Profile
         </span>
 
+        <span onClick={() => navigate("/library")} className={linkClass("/library")}>
+          Library
+        </span>
+
       </nav>
     </header>
   );

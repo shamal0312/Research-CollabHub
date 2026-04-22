@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import { useAuth } from "../context/AuthContext"; // ✅ ADDED
+import { useAuth } from "../context/AuthContext"; // 
 
 import { 
   FaUser,
@@ -25,7 +25,7 @@ const PortfolioView = () => {
 
   const [portfolio, setPortfolio] = useState(null);
 
-  const { user } = useAuth(); // ✅ ADDED
+  const { user } = useAuth(); // 
 
   // FETCH PORTFOLIO
   const fetchPortfolio = async () => {
@@ -42,16 +42,16 @@ const PortfolioView = () => {
     fetchPortfolio();
   }, [slug]);
 
-  // ✅ OWNER CHECK (ADDED)
+  // OWNER CHECK (ADDED)
   const isOwner = user?._id === portfolio?.ownerId;
-
+  const portfolioUrl = `http://192.168.8.192:5173/portfolio/${slug}`;
   if (!portfolio) return <p>Loading...</p>;
 
   return (
     <div className="bg-white min-h-screen">
       <Header />
 
-      {/* 🔥 VIEW MODE LABEL */}
+      {/* VIEW MODE LABEL */}
       {!isOwner && (
         <div className="bg-yellow-100 text-yellow-800 text-center py-2 font-semibold">
           Viewing Public Portfolio (Read Only)
@@ -120,6 +120,34 @@ const PortfolioView = () => {
               <h1 className="text-4xl font-bold text-black mb-2">{portfolio.fullName}</h1>
               <p className="text-gray-600 text-lg">Professional Portfolio</p>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <div>
+              <h2 className="text-3xl font-bold text-black mb-2">
+                Share Portfolio
+              </h2>
+
+              <p className="text-gray-600">
+                Scan this QR code to instantly open this public portfolio.
+              </p>
+
+              <p className="text-sm text-gray-500 mt-2 break-all">
+                {portfolioUrl}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(portfolioUrl)}`}
+                alt="Portfolio QR Code"
+                className="w-[180px] h-[180px]"
+              />
+            </div>
+
           </div>
         </div>
 

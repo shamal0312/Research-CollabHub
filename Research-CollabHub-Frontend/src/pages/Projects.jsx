@@ -31,6 +31,7 @@ const Projects = () => {
   const [editingProject, setEditingProject] = useState(null);
   const [requests, setRequests] = useState({ projectId: null, data: [] });
 
+
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -349,11 +350,11 @@ const Projects = () => {
                         Edit
                       </button>
                       <button
-                        onClick={() => getRequests(p.projectId)}
+                        onClick={() => navigate(`/project-requests/${p.projectId}`)}
                         className="flex-1 bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors font-semibold text-sm"
                       >
                         <FaBell className="inline mr-1" />
-                        Requests
+                        View Requests
                       </button>
                       <button
                         onClick={() => deleteProject(p.projectId)}
@@ -362,55 +363,6 @@ const Projects = () => {
                         <FaTrash />
                       </button>
                     </div>
-
-                    {/* Requests Section */}
-                    {requests.projectId === p.projectId && (
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <h4 className="font-semibold text-black mb-4 flex items-center gap-2">
-                          <FaUserFriends className="text-black" />
-                          Join Requests ({requests.data.length})
-                        </h4>
-                        {requests.data.length === 0 ? (
-                          <p className="text-gray-500 text-sm">No requests yet</p>
-                        ) : (
-                          <div className="space-y-3">
-                            {requests.data.map((r) => (
-                              <div key={r._id} className="bg-gray-50 p-4 rounded-xl">
-                                <div className="flex items-center justify-between">
-                                  <div
-                                    className="flex items-center gap-3 cursor-pointer hover:bg-white p-2 rounded-lg transition-colors"
-                                    onClick={() => navigate(`/profile/${r.studentId._id}`)}
-                                  >
-                                    <img
-                                      src={r.studentId?.profilePicture || "https://via.placeholder.com/32"}
-                                      className="w-10 h-10 rounded-full border border-gray-300"
-                                    />
-                                    <div>
-                                      <div className="font-semibold text-black">{r.studentId?.fullName || r.fullName}</div>
-                                      <div className="text-sm text-gray-500">{r.email}</div>
-                                    </div>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => accept(p.projectId, r._id)}
-                                      className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-semibold text-sm"
-                                    >
-                                      Accept
-                                    </button>
-                                    <button
-                                      onClick={() => reject(p.projectId, r._id)}
-                                      className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-semibold text-sm"
-                                    >
-                                      Reject
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
@@ -534,6 +486,7 @@ const Projects = () => {
           )}
         </div>
       </div>
+      
     </div>
   );
 };

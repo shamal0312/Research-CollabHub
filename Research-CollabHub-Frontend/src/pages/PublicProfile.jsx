@@ -119,6 +119,18 @@ const PublicProfile = () => {
               >
                 Portfolio
               </button>
+
+              <button
+                onClick={() =>
+                  window.open(
+                    `http://localhost:5000/api/profile/public/${id}/cv`,
+                    "_blank"
+                  )
+                }
+                className="bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition-colors"
+              >
+                Download CV
+              </button>
             </div>
           </div>
         </div>

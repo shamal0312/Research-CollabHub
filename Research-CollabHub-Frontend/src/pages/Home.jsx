@@ -10,6 +10,8 @@ const Home = () => {
   const [projects, setProjects] = useState([]);
   const [requested, setRequested] = useState([]); // track clicked
   const [searchTerm, setSearchTerm] = useState("");
+  const [showMatchModal, setShowMatchModal] = useState(false);
+  const [matchData, setMatchData] = useState(null);
   const navigate = useNavigate();
 
   // FETCH PROJECTS (ONLY OTHERS)
@@ -82,6 +84,20 @@ const Home = () => {
     }
   };
 
+  const handleMatchScore = async (projectId) => {
+    try {
+      const res = await axios.get(
+        `/projects/${projectId}/match-score` 
+      );
+
+      setMatchData(res.data);
+      setShowMatchModal(true);
+
+    } catch (err) {
+      alert("Failed to calculate score");
+    }
+  };
+
   return (
     <div className="bg-white min-h-screen">
       <Header />
@@ -142,6 +158,12 @@ const Home = () => {
               >
                 <FaUsers />
                 Messages
+              </button>
+              <button
+                onClick={() => navigate("/resume-checker")}
+                className="bg-white text-black px-6 py-3 rounded-lg hover:bg-gray-800 hover:text-white transition-all duration-200 flex items-center gap-2 font-medium"
+              >
+                Check Resume
               </button>
             </div>
           </div>
@@ -290,27 +312,35 @@ const Home = () => {
                     </button>
                   </div>
 
-                  <button
-                    onClick={() => handleRequest(p.projectId)}
-                    disabled={requested.includes(p.projectId)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                      requested.includes(p.projectId)
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-black text-white hover:bg-gray-800"
-                    }`}
-                  >
-                    {requested.includes(p.projectId) ? (
-                      <>
-                        <FaUserPlus />
-                        Request Sent
-                      </>
-                    ) : (
-                      <>
-                        <FaUserPlus />
-                        Join Project
-                      </>
-                    )}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleMatchScore(p.projectId)}
+                      className="px-4 py-2 rounded-lg text-sm font-medium border border-black text-black hover:bg-black hover:text-white transition-all duration-200"
+                    >
+                      Match Score
+                    </button>
+                    <button
+                      onClick={() => handleRequest(p.projectId)}
+                      disabled={requested.includes(p.projectId)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                        requested.includes(p.projectId)
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-black text-white hover:bg-gray-800"
+                      }`}
+                    >
+                      {requested.includes(p.projectId) ? (
+                        <>
+                          <FaUserPlus />
+                          Request Sent
+                        </>
+                      ) : (
+                        <>
+                          <FaUserPlus />
+                          Join Project
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -325,6 +355,51 @@ const Home = () => {
       >
         <FaPlus />
       </button>
+
+      {showMatchModal && matchData && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white w-[420px] rounded-2xl p-6 shadow-2xl">
+
+            <h2 className="text-2xl font-bold mb-4 text-black">
+              Smart Team Match
+            </h2>
+
+            <p className="text-4xl font-bold mb-4">
+              {matchData.percentage}%
+            </p>
+
+            <p className="mb-2">
+              Skills matched:
+              {matchData.matchedSkills.length > 0
+                ? matchData.matchedSkills.join(", ")
+                : " None"}
+            </p>
+
+            <p className="mb-2">
+              Missing skills:
+              {matchData.missingSkills.length > 0
+                ? matchData.missingSkills.join(", ")
+                : " None"}
+            </p>
+
+            <p className="mb-2">
+              Interest matched: {matchData.interest}
+            </p>
+
+            <p className="mb-6">
+              Availability: {matchData.availability}
+            </p>
+
+            <button
+              onClick={() => setShowMatchModal(false)}
+              className="w-full bg-black text-white py-3 rounded-xl hover:bg-gray-800"
+            >
+              Close
+            </button>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

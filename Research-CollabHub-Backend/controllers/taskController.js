@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Task from "../models/task.js";
 import Workspace from "../models/workspace.js";
+import PDFDocument from "pdfkit";
 
 // 🔹 Create a new task inside a workspace
 export const createTask = async (req, res) => {
@@ -129,5 +130,90 @@ export const deleteTask = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const generateCertificate = async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+    const userId = req.user.id;
+
+    // Find workspace using Project workspaceId
+    const workspace = await Workspace.findOne({
+      workspaceId: workspaceId
+    });
+
+    if (!workspace) {
+      return res.status(404).json({
+        message: "Workspace not found"
+      });
+    }
+
+    // Count completed tasks using real Workspace _id
+    const completedTasks = await Task.countDocuments({
+      workspaceId: workspace._id,
+      assignedTo: userId,
+      status: "Done"
+    });
+
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: 50
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=certificate.pdf"
+    );
+
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    doc.pipe(res);
+
+    doc.fontSize(30)
+      .text("Certificate of Contribution", {
+        align: "center"
+      });
+
+    doc.moveDown(2);
+
+    doc.fontSize(18)
+      .text("Awarded for valuable contribution to", {
+        align: "center"
+      });
+
+    doc.moveDown();
+
+    doc.fontSize(24)
+      .text(workspace.title, {
+        align: "center"
+      });
+
+    doc.moveDown(2);
+
+    doc.fontSize(18)
+      .text(`Completed Tasks: ${completedTasks}`, {
+        align: "center"
+      });
+
+    doc.moveDown();
+
+    doc.fontSize(16)
+      .text(
+        `Date: ${new Date().toLocaleDateString()}`,
+        {
+          align: "center"
+        }
+      );
+
+    doc.end();
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
   }
 };

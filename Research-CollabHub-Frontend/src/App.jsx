@@ -23,6 +23,13 @@ import PortfolioResults from "./pages/PortfolioResults"; // ✅ ADDED
 import PortfolioProjects from "./pages/PortfolioProjects"; // ✅ ADDED
 import AdminResults from "./pages/AdminResults"; // ✅ ADDED
 import AdminDashboard from "./pages/AdminDashboard"; // ✅ ADDED
+import Library from "./pages/Library"; // ✅ ADDED
+import MyUploads from "./pages/MyUploads";
+import UploadLibrary from "./pages/UploadLibrary";
+import AdminLibraryRequests from "./pages/AdminLibraryRequests";
+import ProjectRequests from "./pages/ProjectRequests";
+import ResumeChecker from "./pages/ResumeChecker";
+import CodeLab from "./pages/CodeLab";
 
 
 import AdminRoute from "./components/AdminRoute";
@@ -55,11 +62,13 @@ function App() {
         <Route path="/workspace/:workspaceId/tasks" element={<WorkspaceTasks />} />
         <Route path="/workspace/:workspaceId/tasks/:taskId" element={<WorkspaceTaskDetails />}/>
         <Route path="/workspace/:workspaceId/messages" element={<WorkspaceChat />}/>
+        <Route path="/code-lab/:workspaceId" element={<CodeLab />}/>
         <Route path="/portfolio/:slug/contact" element={<PortfolioContact />} />
         <Route path="/portfolio/:slug/certificates" element={<PortfolioCertificates />} />
         <Route path="/portfolio/:slug/skills" element={<PortfolioSkills />} />
         <Route path="/portfolio/:slug/results" element={<PortfolioResults />} />
         <Route path="/portfolio/:slug/projects" element={<PortfolioProjects />} />
+        <Route path="/project-requests/:projectId" element={<ProjectRequests />} />
  
         
 
@@ -80,6 +89,50 @@ function App() {
       <AdminResults />
     </AdminRoute>
   }
+/>
+<Route
+  path="/library"
+  element={
+    <PrivateRoute>
+      <Library />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/library/my"
+  element={
+    <PrivateRoute>
+      <MyUploads />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/library/upload"
+  element={
+    <PrivateRoute>
+      <UploadLibrary />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/admin/library-requests"
+  element={
+    <AdminRoute>
+      <AdminLibraryRequests />
+    </AdminRoute>
+  }
+/>
+
+<Route
+ path="/resume-checker"
+ element={
+   <PrivateRoute>
+     <ResumeChecker />
+   </PrivateRoute>
+ }
 />
          
         

@@ -9,7 +9,8 @@ import {
   FaFileAlt,
   FaUsers,
   FaCalendarCheck,
-  FaUserFriends
+  FaUserFriends,
+  FaCode
 } from "react-icons/fa";
 
 const WorkspaceDetails = () => {
@@ -96,6 +97,13 @@ const WorkspaceDetails = () => {
               >
                 <FaUsers />
                 Tasks
+              </button>
+              <button 
+                onClick={() => navigate(`/code-lab/${workspaceId}`)} 
+                className="flex items-center gap-2 hover:text-gray-300 transition-colors"
+              >
+                <FaCode />
+                Code Lab
               </button>
             </div>
           </div>
