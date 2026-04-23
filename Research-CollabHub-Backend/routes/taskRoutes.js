@@ -3,7 +3,8 @@ import {
   createTask,
   getTasksByWorkspace,
   updateTask,
-  deleteTask
+  deleteTask,
+  generateCertificate
 } from "../controllers/taskController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
@@ -12,6 +13,9 @@ const router = express.Router();
 
 // ✅ Create a new task inside a workspace
 router.post("/create", protect, createTask);
+
+// ✅ Generate certificate
+router.get("/certificate/:workspaceId", protect, generateCertificate);
 
 // ✅ Get all tasks for a workspace
 router.get("/:workspaceId", protect, getTasksByWorkspace);

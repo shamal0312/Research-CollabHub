@@ -9,8 +9,9 @@ import {
   rejectRequest,
   searchProjects,
   getMyProjects,
-  getAppliedProjects // 🔹 new controller
-  , toggleLike, toggleFavorite, addComment, deleteComment
+  getAppliedProjects, // new controller
+  toggleLike, toggleFavorite, addComment, deleteComment, autoSelectBestMembers,
+  getMatchScore
 } from "../controllers/projectController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
@@ -60,8 +61,8 @@ router.post("/:projectId/comment", protect, addComment);
 //delete comment
 router.delete("/:projectId/comment/:commentId", protect, deleteComment);
 
+router.post("/:projectId/auto-select", protect, autoSelectBestMembers);
 
-
-
+router.get("/:projectId/match-score", protect, getMatchScore);
 
 export default router;

@@ -123,11 +123,11 @@ const AdminDashboard = () => {
             </button>
 
             <button
-              onClick={() => alert("User management coming soon")}
+              onClick={() => navigate("/admin/library-requests")}
               className="bg-black text-white px-6 py-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-3"
             >
               <FaUsers />
-              <span>Manage Users</span>
+              <span>Library Requests</span>
             </button>
 
             <button

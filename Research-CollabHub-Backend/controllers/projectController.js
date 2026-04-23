@@ -1,5 +1,6 @@
 import Project from "../models/Project.js";
 import Workspace from "../models/workspace.js";
+import { sendEmail } from "../config/email.js";
 import User from "../models/user.js";
 
 // 🔹 Create a new project
@@ -176,6 +177,7 @@ export const acceptRequest = async (req, res) => {
       return res.status(404).json({ message: "Request not found" });
 
     const selectedRequest = project.requests[reqIndex];
+    const user = await User.findById(selectedRequest.studentId);
 
     // Prevent duplicate acceptance
     if (selectedRequest.status === "accepted")
@@ -188,8 +190,15 @@ export const acceptRequest = async (req, res) => {
     selectedRequest.status = "accepted";
     selectedRequest.responseMessage = "Your request has been accepted";
 
+    await sendEmail(
+       user.email,
+      "Project Accepted 🎉",
+      `You have been selected for the project: ${project.title}`
+   );
+
     // 🔹 If project becomes full after this acceptance
     if (project.members.length >= project.maxMembers) {
+       project.status = "in progress";
       project.requests.forEach(r => {
         if (r.status === "pending") {
           r.status = "rejected";
@@ -453,3 +462,139 @@ export const deleteComment = async (req, res) => {
   }
 };
 
+// ================= AUTO SELECT BEST MEMBERS (RANKING ONLY) =================
+export const autoSelectBestMembers = async (req, res) => {
+  try {
+    const ownerId = req.user.id;
+    const projectId = req.params.projectId;
+
+    const project = await Project.findOne({ projectId })
+      .populate("requests.studentId", "skills email fullName");
+
+    if (!project)
+      return res.status(404).json({ message: "Project not found" });
+
+    if (project.ownerId.toString() !== ownerId)
+      return res.status(403).json({ message: "Only owner can run auto selection" });
+
+    // 🧠 NORMALIZED SCORING
+    const calculateScore = (userSkills, requiredSkills) => {
+      const u = userSkills.map(s => s.toLowerCase());
+      const r = requiredSkills.map(s => s.toLowerCase());
+
+      let matched = [];
+
+      r.forEach(skill => {
+        if (u.includes(skill)) {
+          matched.push(skill);
+        }
+      });
+
+      const score = matched.length * 10;
+
+      const percentage =
+        r.length === 0 ? 0 : Math.round((matched.length / r.length) * 100);
+
+      return { score, matched, percentage };
+    };
+
+    // 🧠 CALCULATE ONLY (NO SELECTION)
+    const candidates = project.requests.map(req => {
+      const userSkills = req.studentId?.skills || [];
+
+      const { score, matched, percentage } = calculateScore(
+        userSkills,
+        project.skillsRequired
+      );
+
+      return {
+        requestId: req._id,
+        studentId: req.studentId,
+        score,
+        percentage,
+        matchedSkills: matched,
+        isTop: false
+      };
+    });
+
+    // 🔥 SORT
+    candidates.sort((a, b) => b.score - a.score);
+
+    // 🔥 MARK TOP 5
+    candidates.forEach((c, index) => {
+      if (index < 5) c.isTop = true;
+    });
+
+    // ❌ REMOVED:
+    // - adding members
+    // - updating request status
+    // - rejecting others
+    // - sending emails
+
+    res.json({
+      message: "Smart ranking generated",
+      candidates
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getMatchScore = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user.id;
+
+    const project = await Project.findOne({ projectId });
+    const user = await User.findById(userId);
+
+    if (!project || !user) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    const userSkills = user.skills || [];
+    const requiredSkills = project.skillsRequired || [];
+
+    const matchedSkills = requiredSkills.filter(skill =>
+      userSkills.some(us =>
+        us.toLowerCase() === skill.toLowerCase()
+      )
+    );
+
+    const missingSkills = requiredSkills.filter(skill =>
+      !userSkills.some(us =>
+        us.toLowerCase() === skill.toLowerCase()
+      )
+    );
+
+    let skillPercent = 0;
+
+    if (requiredSkills.length > 0) {
+      skillPercent = Math.round(
+        (matchedSkills.length / requiredSkills.length) * 100
+      );
+    }
+
+    let interest = "General";
+
+    const text =
+      (project.title + " " + project.description).toLowerCase();
+
+    if (text.includes("ai")) interest = "AI";
+    else if (text.includes("web")) interest = "Web";
+    else if (text.includes("mobile")) interest = "Mobile";
+    else if (text.includes("research")) interest = "Research";
+
+    res.json({
+      percentage: skillPercent,
+      matchedSkills,
+      missingSkills,
+      interest,
+      availability: "Available"
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
